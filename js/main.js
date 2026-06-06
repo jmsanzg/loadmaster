@@ -596,32 +596,6 @@
                 );
                 y = 32;
 
-                const volPct = truck.volumeUtilization * 100;
-                const wgtPct = (truck.totalWeight / truck.type.maxWeight) * 100;
-                const barW   = CW - 38, barX = M + 22, barH = 4.5;
-
-                doc.setFontSize(8);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(...SUB);
-                doc.text(t('pdf.volumeLabel'), M, y + 4);
-                doc.text(t('pdf.weightLabel'), M, y + 12);
-
-                [[volPct, 0, volPct > 90 ? RED : GREEN],
-                 [wgtPct, 8, wgtPct > 90 ? RED : BLUE ]].forEach(([pct, dy, color]) => {
-                    doc.setFillColor(...BORDER);
-                    doc.roundedRect(barX, y + dy, barW, barH, 1.5, 1.5, 'F');
-                    doc.setFillColor(...color);
-                    doc.roundedRect(barX, y + dy, Math.min(pct / 100, 1) * barW, barH, 1.5, 1.5, 'F');
-                    doc.setFontSize(7.5);
-                    doc.setTextColor(...TXT);
-                    doc.text(fmtDec(pct, 1) + '%', barX + barW + 2.5, y + dy + 3.8);
-                });
-                doc.setFontSize(7.5);
-                doc.setTextColor(...SUB);
-                doc.text(`(${fmt(truck.totalWeight)} / ${fmt(truck.type.maxWeight)} kg)`, barX + barW + 14, y + 11.8);
-
-                y += 22;
-
                 const sortedPl = [...truck.placements].sort((a, b) => a.z - b.z);
                 const normalLabel = t('pdf.normal');
                 doc.autoTable({

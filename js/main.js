@@ -465,6 +465,10 @@
         const btn = document.getElementById('btn-download-pdf');
         if (btn) { btn.disabled = true; btn.textContent = t('alert.generatingPdf'); }
 
+        // Clear any pallet selection so screenshots show all pallets at full opacity
+        activeVisualizers.forEach(v => v.highlightPallet(null));
+        document.getElementById('results-content')?.querySelectorAll('tr.row-selected').forEach(r => r.classList.remove('row-selected'));
+
         try {
             const { jsPDF } = window.jspdf;
             const doc  = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });

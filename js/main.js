@@ -436,9 +436,14 @@
                     const rows = card.querySelectorAll('tr[data-pallet-id]');
                     rows.forEach(row => {
                         row.addEventListener('click', () => {
+                            const alreadySelected = row.classList.contains('row-selected');
                             rows.forEach(r => r.classList.remove('row-selected'));
-                            row.classList.add('row-selected');
-                            vis.highlightPallet(row.dataset.palletId);
+                            if (alreadySelected) {
+                                vis.highlightPallet(null);
+                            } else {
+                                row.classList.add('row-selected');
+                                vis.highlightPallet(row.dataset.palletId);
+                            }
                         });
                     });
                 }

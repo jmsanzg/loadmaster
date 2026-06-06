@@ -135,6 +135,7 @@
                 const edges = new THREE.LineSegments(eGeo, eMat);
                 edges.position.copy(mesh.position);
                 this.scene.add(edges);
+                mesh.userData.edges = edges;
             });
         }
 
@@ -193,8 +194,12 @@
         _clearHover() {
             if (this.hoveredMesh) {
                 const isSelected = this.hoveredMesh === this.selectedMesh;
-                this.hoveredMesh.material.opacity  = isSelected ? 1.0 : 0.88;
+                const isDimmed   = this.selectedMesh !== null && !isSelected;
+                this.hoveredMesh.material.opacity  = isSelected ? 1.0 : (isDimmed ? 0.08 : 0.88);
                 this.hoveredMesh.material.emissive = new THREE.Color(isSelected ? 0x554400 : 0x000000);
+                if (this.hoveredMesh.userData.edges) {
+                    this.hoveredMesh.userData.edges.material.opacity = isDimmed ? 0.04 : (isSelected ? 0.5 : 0.28);
+                }
                 this.hoveredMesh = null;
             }
         }
@@ -205,34 +210,51 @@
             if (!hits.length) return;
             const mesh = hits[0].object;
             const { pallet } = mesh.userData;
-            this._applySelection(mesh);
+            const isAlreadySelected = mesh === this.selectedMesh;
+            this._applySelection(isAlreadySelected ? null : mesh);
             // Sync table row selection
             const card = document.getElementById(this.containerId)?.closest('.result-truck-card');
             if (card) {
                 card.querySelectorAll('tr[data-pallet-id]').forEach(r => r.classList.remove('row-selected'));
-                const target = card.querySelector(`tr[data-pallet-id="${pallet.id}"]`);
-                if (target) {
-                    target.classList.add('row-selected');
-                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (!isAlreadySelected) {
+                    const target = card.querySelector(`tr[data-pallet-id="${pallet.id}"]`);
+                    if (target) {
+                        target.classList.add('row-selected');
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }
             }
         }
 
         highlightPallet(palletId) {
+            if (palletId === null) { this._applySelection(null); return; }
             const mesh = this.palletMeshes.find(m => m.userData.pallet.id === palletId);
             this._applySelection(mesh || null);
         }
 
         _applySelection(mesh) {
-            // Clear previous selection if it's not hovered (hover already owns its visual)
-            if (this.selectedMesh && this.selectedMesh !== this.hoveredMesh) {
-                this.selectedMesh.material.emissive = new THREE.Color(0x000000);
-                this.selectedMesh.material.opacity  = 0.88;
-            }
             this.selectedMesh = mesh;
-            if (mesh && mesh !== this.hoveredMesh) {
-                mesh.material.emissive = new THREE.Color(0x554400);
-                mesh.material.opacity  = 1.0;
+
+            if (mesh) {
+                this.palletMeshes.forEach(m => {
+                    if (m === this.hoveredMesh) return;
+                    if (m === mesh) {
+                        m.material.emissive = new THREE.Color(0x554400);
+                        m.material.opacity  = 1.0;
+                        if (m.userData.edges) m.userData.edges.material.opacity = 0.5;
+                    } else {
+                        m.material.emissive = new THREE.Color(0x000000);
+                        m.material.opacity  = 0.08;
+                        if (m.userData.edges) m.userData.edges.material.opacity = 0.04;
+                    }
+                });
+            } else {
+                this.palletMeshes.forEach(m => {
+                    if (m === this.hoveredMesh) return;
+                    m.material.emissive = new THREE.Color(0x000000);
+                    m.material.opacity  = 0.88;
+                    if (m.userData.edges) m.userData.edges.material.opacity = 0.28;
+                });
             }
         }
 

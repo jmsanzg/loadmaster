@@ -129,18 +129,18 @@ main { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
 .btn-gold      { background: #e69b1a; color: #1a1000; border-color: #c8860f; }
 .btn-gold:hover:not(:disabled) { background: #c8860f; }
 .btn-icon {
-  background: transparent;
+  background: var(--accent);
   border: none;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 5px 8px;
   border-radius: 6px;
-  font-size: 1rem;
-  color: var(--accent2);
-  transition: background .1s;
+  font-size: .85rem;
+  color: #fff;
+  transition: filter .1s;
 }
-.btn-icon:hover { background: var(--bg3); }
-.btn-icon.danger { color: var(--danger); }
-.btn-icon.danger:hover { background: #3d1a1a; }
+.btn-icon:hover { filter: brightness(1.15); }
+.btn-icon.danger { background: var(--danger); color: #fff; }
+.btn-icon.danger:hover { filter: brightness(1.15); }
 
 /* ── Empty state ───────────────────────────────────────────────────────── */
 .empty-state {
@@ -154,6 +154,8 @@ main { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
 /* ── Trucks table ──────────────────────────────────────────────────────── */
 #trucks-table-container { overflow-x: auto; }
+#trucks-table th:last-child,
+#trucks-table td:last-child { text-align: right; width: 88px; }
 
 /* ── Pallets table ─────────────────────────────────────────────────────── */
 .summary-bar {
@@ -170,6 +172,10 @@ main { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
 .summary-bar span { color: var(--text0); font-weight: 500; }
 
 #pallets-table-container { overflow-x: auto; }
+#pallets-table th:last-child,
+#pallets-table td:last-child { text-align: right; width: 88px; }
+#pallets-table th:nth-child(2),
+#pallets-table td:nth-child(2) { min-width: 220px; }
 table { width: 100%; border-collapse: collapse; font-size: .875rem; }
 thead th {
   background: var(--bg2);
@@ -195,7 +201,7 @@ tbody td { padding: 9px 12px; }
   border-radius: 4px;
   font-size: .8rem;
 }
-.pallet-label-cell { max-width: 180px; }
+.pallet-label-cell { max-width: 260px; }
 .pallet-label {
   font-size: .82rem;
   color: var(--text0);
@@ -203,7 +209,7 @@ tbody td { padding: 9px 12px; }
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
-  max-width: 170px;
+  max-width: 250px;
 }
 .pallet-label-empty { color: var(--text1); opacity: .45; }
 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoadMaster</title>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-shell">
+
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <header>
+    <div class="logo">
+      <span class="logo-icon"><i class="fa-solid fa-truck"></i></span>
+      <h1>LoadMaster</h1>
+    </div>
+    <nav class="tabs">
+      <button class="tab" data-tab="trucks"><i class="fa-solid fa-truck"></i> <span data-i18n="tabs.trucks">Camiones</span></button>
+      <button class="tab active" data-tab="pallets"><i class="fa-solid fa-box"></i> <span data-i18n="tabs.pallets">Palets</span></button>
+      <button class="tab" data-tab="results"><i class="fa-solid fa-bullseye"></i> <span data-i18n="tabs.results">Resultados</span></button>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="es" onclick="App.setLanguage('es')">ES</button>
+      <button class="lang-btn" data-lang="en" onclick="App.setLanguage('en')">EN</button>
+    </div>
+  </header>
+
+  <!-- ── Main ────────────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- ── Trucks tab ──────────────────────────────────────────────── -->
+    <section id="tab-trucks" class="tab-content">
+      <div class="section-header">
+        <h2 data-i18n="trucks.title">Tipos de Camiones</h2>
+        <div class="actions">
+          <button id="btn-add-truck"     class="btn btn-primary"><i class="fa-solid fa-plus"></i> <span data-i18n="trucks.addBtn">Añadir camión</span></button>
+          <button id="btn-import-trucks" class="btn btn-secondary"><i class="fa-solid fa-upload"></i> <span data-i18n="trucks.importBtn">Importar</span></button>
+          <button id="btn-export-trucks" class="btn btn-secondary"><i class="fa-solid fa-download"></i> <span data-i18n="trucks.exportBtn">Exportar</span></button>
+        </div>
+      </div>
+      <div id="trucks-table-container">
+        <table id="trucks-table">
+          <thead>
+            <tr>
+              <th data-i18n="trucks.col.name">Nombre</th>
+              <th data-i18n="trucks.col.length">Largo (cm)</th>
+              <th data-i18n="trucks.col.width">Ancho (cm)</th>
+              <th data-i18n="trucks.col.height">Alto (cm)</th>
+              <th data-i18n="trucks.col.volume">Vol. (m³)</th>
+              <th data-i18n="trucks.col.maxWeight">Peso máx. (kg)</th>
+              <th data-i18n="trucks.col.cost">Coste (€)</th>
+              <th data-i18n="trucks.col.actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="trucks-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Pallets tab ──────────────────────────────────────────────── -->
+    <section id="tab-pallets" class="tab-content active">
+      <div class="section-header">
+        <h2 data-i18n="pallets.title">Lista de Palets</h2>
+        <div class="actions">
+          <button id="btn-add-pallet"    class="btn btn-primary"><i class="fa-solid fa-plus"></i> <span data-i18n="pallets.addBtn">Añadir palet</span></button>
+          <button id="btn-clear-pallets" class="btn btn-danger"><i class="fa-solid fa-trash"></i> <span data-i18n="pallets.clearBtn">Limpiar todo</span></button>
+          <button id="btn-optimize"      class="btn btn-gold"><i class="fa-solid fa-bolt"></i> <span data-i18n="pallets.optimizeBtn">Calcular carga óptima</span></button>
+        </div>
+      </div>
+      <div id="opt-progress" class="progress-bar hidden" style="margin-bottom:12px">
+        <div class="progress-fill"></div>
+      </div>
+      <div id="pallets-table-container">
+        <table id="pallets-table">
+          <thead>
+            <tr>
+              <th data-i18n="pallets.col.id">ID</th>
+              <th data-i18n="pallets.col.name">Nombre</th>
+              <th data-i18n="pallets.col.length">Largo (cm)</th>
+              <th data-i18n="pallets.col.width">Ancho (cm)</th>
+              <th data-i18n="pallets.col.height">Alto (cm)</th>
+              <th data-i18n="pallets.col.weight">Peso (kg)</th>
+              <th data-i18n="pallets.col.stackable">Apilable</th>
+              <th data-i18n="pallets.col.actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="pallets-tbody"></tbody>
+        </table>
+      </div>
+      <div id="pallets-summary" class="summary-bar"></div>
+    </section>
+
+    <!-- ── Results tab ──────────────────────────────────────────────── -->
+    <section id="tab-results" class="tab-content">
+      <div id="results-content">
+        <p class="empty-state">
+          <span class="empty-icon"><i class="fa-solid fa-bullseye"></i></span><br>
+          <span data-i18n="results.initial">Configura los camiones y los palets, luego pulsa</span><br>
+          <strong data-i18n="results.initialAction">Calcular carga óptima</strong> <span data-i18n="results.initialSuffix">en la pestaña Palets.</span>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Modal ───────────────────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal" class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title"></h3>
+        <button class="modal-close" id="modal-close" data-i18n-aria-label="modal.close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- ── 3D tooltip ──────────────────────────────────────────────────── -->
+  <div id="vis-tooltip"></div>
+
+  <!-- ── Scripts ─────────────────────────────────────────────────────── -->
+  <!-- Three.js r128 global build -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- OrbitControls adds THREE.OrbitControls (not on cdnjs, served locally) -->
+  <script src="libs/OrbitControls.js"></script>
+  <!-- jsPDF + autoTable for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- i18n must load before custom scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/packing.js"></script>
+  <script src="js/trucks.js"></script>
+  <script src="js/pallets.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

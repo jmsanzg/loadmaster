@@ -5,6 +5,31 @@
 
 (function (global) {
 
+    // Returns true only if the union of support rectangles fully covers [x,x+w]×[z,z+d].
+    function isFullySupported(x, z, w, d, supports) {
+        const xs = new Set([x, x + w]);
+        const zs = new Set([z, z + d]);
+        for (const p of supports) {
+            xs.add(Math.max(p.x, x));
+            xs.add(Math.min(p.x + p.w, x + w));
+            zs.add(Math.max(p.z, z));
+            zs.add(Math.min(p.z + p.d, z + d));
+        }
+        const sortedX = [...xs].sort((a, b) => a - b);
+        const sortedZ = [...zs].sort((a, b) => a - b);
+        for (let i = 0; i < sortedX.length - 1; i++) {
+            const cx = (sortedX[i] + sortedX[i + 1]) / 2;
+            for (let j = 0; j < sortedZ.length - 1; j++) {
+                const cz = (sortedZ[j] + sortedZ[j + 1]) / 2;
+                const covered = supports.some(
+                    p => p.x <= cx && cx <= p.x + p.w && p.z <= cz && cz <= p.z + p.d
+                );
+                if (!covered) return false;
+            }
+        }
+        return true;
+    }
+
     function overlaps3D(a, b) {
         return a.x < b.x + b.w && a.x + a.w > b.x &&
                a.y < b.y + b.h && a.y + a.h > b.y &&
@@ -33,7 +58,8 @@
         }
 
         // Gravity: item settles at the maximum top height within its XZ footprint.
-        // Returns null if a non-stackable item sits at that top level.
+        // Returns null if a non-stackable item sits at that top level or if the
+        // candidate's base is not fully supported (no overhang allowed).
         getSettledY(x, z, w, d) {
             let maxY = 0;
             for (const p of this.placed) {
@@ -43,13 +69,16 @@
             }
             if (maxY === 0) return 0;
 
+            const supports = [];
             for (const p of this.placed) {
                 if (x < p.x + p.w && x + w > p.x && z < p.z + p.d && z + d > p.z) {
-                    if (Math.abs(p.y + p.h - maxY) < 0.01 && !p.pallet.stackable) {
-                        return null;
+                    if (Math.abs(p.y + p.h - maxY) < 0.01) {
+                        if (!p.pallet.stackable) return null;
+                        supports.push(p);
                     }
                 }
             }
+            if (!isFullySupported(x, z, w, d, supports)) return null;
             return maxY;
         }
 

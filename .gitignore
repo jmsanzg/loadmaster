@@ -1,5 +1,7 @@
 # Dependencies
 /node_modules/
+# Build output
+/dist/
 # Old files (archived)
 /_old/
 

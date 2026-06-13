@@ -32,6 +32,7 @@ Optimizador de carga de camiones 3D basado en navegador. Dado un conjunto de pal
 | `npm run build`    | Compila TypeScript y genera el bundle de producción      |
 | `npm run preview`  | Sirve localmente el build de producción para probarlo    |
 | `npm run lint`     | Ejecuta `tsc --noEmit` para verificar tipos              |
+| `npm run deploy`   | Despliega la aplicación en GitHub Pages                  |
 
 ### Stack tecnológico
 

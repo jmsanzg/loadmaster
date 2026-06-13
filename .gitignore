@@ -1,0 +1,26 @@
+# Dependencies
+/node_modules/
+# Old files (archived)
+/_old/
+
+# Default ignored files
+/shelf/
+/.idea/
+# Editor-based HTTP Client requests
+/httpRequests/
+# OpenAI Codex
+.codex/
+*.codex
+# ChatGPT local artifacts
+.chatgpt/
+*.chatgpt
+# Claude Code
+.claude/
+claude-project/
+CLAUDE.md
+# Ignored default folder with query files
+/queries/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+*.iml

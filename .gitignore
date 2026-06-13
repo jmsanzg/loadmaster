@@ -1,3 +1,8 @@
+# Dependencies
+/node_modules/
+# Old files (archived)
+/_old/
+
 # Default ignored files
 /shelf/
 /.idea/
